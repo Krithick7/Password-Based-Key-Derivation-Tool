@@ -37,6 +37,7 @@ from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 # - scrypt with memory-hard parameters (defaults selected below)
 MIN_PBKDF2_ITERATIONS = 100_000
 MIN_SALT_LENGTH = 16
+DEFAULT_SALT_LENGTH = MIN_SALT_LENGTH
 DEFAULT_PBKDF2_ITERATIONS = 300_000
 DEFAULT_PBKDF2_KEY_LENGTH = 32
 
@@ -501,26 +502,27 @@ def evaluate_password_strength(
     )
 
 
-def generate_password_report(password: str) -> dict:
+def generate_password_report(password: str, salt_length: int = DEFAULT_SALT_LENGTH) -> dict:
     """
     Run all local checks/derivations for a given password and return a report.
 
     Args:
         password: Password to test locally.
+        salt_length: Salt size in bytes for PBKDF2 and scrypt (default 16).
 
     Returns:
         Dictionary containing PBKDF2, bcrypt, scrypt, and strength details.
     """
     _validate_password(password)
 
-    pbkdf2_salt = generate_salt(16)
+    pbkdf2_salt = generate_salt(salt_length)
     pbkdf2_key = derive_key_pbkdf2(password=password, salt=pbkdf2_salt)
     pbkdf2_verify = verify_key_pbkdf2(password, pbkdf2_salt, pbkdf2_key)
 
     bcrypt_hash = hash_password_bcrypt(password, rounds=DEFAULT_BCRYPT_ROUNDS)
     bcrypt_verify = verify_password_bcrypt(password, bcrypt_hash)
 
-    scrypt_salt = generate_salt(16)
+    scrypt_salt = generate_salt(salt_length)
     scrypt_key = derive_key_scrypt(password=password, salt=scrypt_salt)
     scrypt_verify = verify_key_scrypt(password, scrypt_salt, scrypt_key)
 
