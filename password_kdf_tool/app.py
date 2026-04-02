@@ -1,12 +1,3 @@
-"""
-Simple local frontend for password KDF testing.
-
-Run:
-    python app.py
-Then open:
-    http://127.0.0.1:5000
-"""
-
 from flask import Flask, render_template_string, request
 
 from password_kdf_module import PasswordKDFError, generate_password_report
@@ -33,7 +24,7 @@ HTML = """
 <body>
   <div class="card">
     <h2>Password KDF Local Tester</h2>
-    <p class="hint">Runs locally. Your password is processed in this app process and not sent to any remote service.</p>
+    <p class="hint"></p>
     <form method="post">
       <label for="password">Enter password</label>
       <input id="password" name="password" type="password" required />
